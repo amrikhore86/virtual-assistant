@@ -6,6 +6,7 @@ import wikipedia
 import webbrowser
 import os
 import time
+from pygame import mixer
 
 engine=pyttsx3.init('sapi5')
 voices=engine.getProperty('voices')
@@ -41,7 +42,7 @@ def wish():
     night=["Good night sir","Good night","Night sir","Merry dreams sir"]
     day_hour=int(datetime.datetime.now().hour)
     if day_hour>=4 and day_hour<12:
-        speak(random.choise(morning))
+        speak(random.choice(morning))
     elif day_hour==12:
         speak(random.choice(noon))
     elif day_hour>12 and day_hour<=17:
@@ -52,65 +53,40 @@ def wish():
 if __name__=="__main__" :
     wish()
     while True:
-        stat=1
         query = mic_input().lower()
-        print(query)
-
-        if 'lock query' in query:
-            stat=0
-            speak("Locked Speech Input")
-
-        if 'unlock query' in query:
-            if stat==0:
-                speak("Input Password")
-                pwd=mic_input()
-                pwd=pwd.lower()
-                if pwd=='rainy day':
-                    stat=1
-                    speak("Query Unlocked")
-                else :
-                    speak("Password incorrect")
+        print("Got Input : "query)
 
 
-        if 'search' in query:
-            if stat ==1:
+        if 'wiki' in query or 'wikipedia' in query:
                 speak('Looking up Wikipedia...')
                 query = query.replace("search", "")
                 results = wikipedia.summary(query, sentences=2)
                 speak("According to Wikipedia ")
                 print(results)
                 speak(results)
-            else :
-                speak("Query Locked")
 
         if 'youtube' in query:
-            if stat==1:
-                webbrowser.open("youtube.com")
-            else:
-                speak("Query Locked")
+                webbrowser.get('firefox').open("youtube.com")
 
         if 'google' in query:
-            if stat==1:
-                webbrowser.open("google.com")
-            else:
-                speak("Query Locked")
+
+                webbrowser.get("mozilla").open("https://www.google.com")
 
         if 'atom' in query:
             code_path = 'C:\\Users\\Me\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\GitHub, Inc\\Atom'
-            if stat==1:
-                os.startfile(code_path)
-            else:
-                speak("Query Locked")
+            os.startfile(code_path)
 
         if 'time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"The time is {strTime}")
 
         if 'exit' in query:
-            speak("Closing all instances")
+            speak("Closing all instances of Voice Assistant . Good Bye Sir")
             exit()
 
         if 'timer' or 'reminder':
             speak("Timer Set")
             time.sleep(int(query[-10:-9]))
-            speak("Ping Ping Ping")
+            mixer.init()
+            mixer.music.load('a.mp3')
+            mixer.music.play()
